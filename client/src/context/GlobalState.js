@@ -1,25 +1,26 @@
 import React, { createContext, useReducer } from "react";
-
 import AppReducer from "./AppReducer";
 import axios from "axios";
 
-//Initial state
+// Initial state
 const initialState = {
   transactions: [],
-  loading: false,
+  error: null,
+  loading: true,
 };
 
-//Create context
+// Create context
 export const GlobalContext = createContext(initialState);
 
-//Provider component
+// Provider component
 export const GlobalProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
-  //Actions
+  // Actions
   async function getTransactions() {
     try {
-      const res = await axios.get("api/v1/transactions");
+      const res = await axios.get("/api/v1/transactions");
+      console.log(res);
 
       dispatch({
         type: "GET_TRANSACTIONS",
@@ -35,7 +36,8 @@ export const GlobalProvider = ({ children }) => {
 
   async function deleteTransaction(id) {
     try {
-      await axios.delete(`api/v1/transactions/${id}`);
+      await axios.delete(`/api/v1/transactions/${id}`);
+
       dispatch({
         type: "DELETE_TRANSACTION",
         payload: id,
@@ -54,8 +56,10 @@ export const GlobalProvider = ({ children }) => {
         "Content-Type": "application/json",
       },
     };
+
     try {
-      const res = await axios.post("api/v1/transactions", transaction, config);
+      const res = await axios.post("/api/v1/transactions", transaction, config);
+
       dispatch({
         type: "ADD_TRANSACTION",
         payload: res.data.data,
@@ -72,9 +76,9 @@ export const GlobalProvider = ({ children }) => {
     <GlobalContext.Provider
       value={{
         transactions: state.transactions,
-        getTransactions,
         error: state.error,
         loading: state.loading,
+        getTransactions,
         deleteTransaction,
         addTransaction,
       }}
