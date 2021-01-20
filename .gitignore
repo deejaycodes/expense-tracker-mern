@@ -2,4 +2,4 @@ node_modules
 config/config.env
 expense-tracker-react-d/
 client/extras/
- client/src/reducer.js
+client/src/reducer.js
